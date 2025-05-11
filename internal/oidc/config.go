@@ -65,6 +65,7 @@ type Configuration struct {
 	EndpointUserInfo            string
 	EndpointIntrospection       string
 	EndpointTokenRevocation     string
+	EndpointDeviceAuthorization string
 	EndpointPrefix              string
 
 	UserInfoDefaultSigAlg        goidc.SignatureAlgorithm
@@ -203,4 +204,6 @@ type Configuration struct {
 	OpenIDFedClientRegTypes         []goidc.ClientRegistrationType
 	OpenIDFedRequiredTrustMarksFunc goidc.RequiredTrustMarksFunc
 	OpenIDFedTrustMarkSigAlgs       []goidc.SignatureAlgorithm
+
+	DeviceAuthorizationIsEnabled bool
 }
