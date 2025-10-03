@@ -72,7 +72,6 @@ func validClaims(ctx oidc.Context, token string) (map[string]any, error) {
 }
 
 func generateGrant(ctx oidc.Context, req request) (tokenResp response, err error) {
-
 	if !slices.Contains(ctx.GrantTypes, req.grantType) {
 		return response{}, goidc.NewError(goidc.ErrorCodeUnsupportedGrantType, "unsupported grant type")
 	}
@@ -88,6 +87,8 @@ func generateGrant(ctx oidc.Context, req request) (tokenResp response, err error
 		return generateJWTBearerGrant(ctx, req)
 	case goidc.GrantCIBA:
 		return generateCIBAGrant(ctx, req)
+	case goidc.GrantDeviceCode:
+		return generateDeviceCodeGrant(ctx, req)
 	default:
 		return response{}, goidc.NewError(goidc.ErrorCodeUnsupportedGrantType, "unsupported grant type")
 	}

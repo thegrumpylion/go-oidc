@@ -9,21 +9,35 @@ import (
 )
 
 type DeviceAuthorizationManager struct {
-	DeviceAuthorizations map[string]*goidc.DeviceAuthorizationRequest
+	DeviceAuthorizations map[string]*goidc.DeviceAuthorization
 	mu                   sync.RWMutex
+	maxSize              int
+}
+
+func NewDeviceAuthorizationManager(maxSize int) *DeviceAuthorizationManager {
+	return &DeviceAuthorizationManager{
+		DeviceAuthorizations: make(map[string]*goidc.DeviceAuthorization),
+		maxSize:              maxSize,
+	}
 }
 
 // Save implements goidc.DeviceAuthorizationManager.
-func (m *DeviceAuthorizationManager) Save(_ context.Context, request *goidc.DeviceAuthorizationRequest) error {
+func (m *DeviceAuthorizationManager) Save(_ context.Context, request *goidc.DeviceAuthorization) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+
+	if len(m.DeviceAuthorizations) >= m.maxSize {
+		removeOldest(m.DeviceAuthorizations, func(a *goidc.DeviceAuthorization) int {
+			return a.CreatedAtTimestamp
+		})
+	}
 
 	m.DeviceAuthorizations[request.DeviceCode] = request
 	return nil
 }
 
 // DeviceAuthorization implements goidc.DeviceAuthorizationManager.
-func (m *DeviceAuthorizationManager) DeviceAuthorization(_ context.Context, deviceCode string) (*goidc.DeviceAuthorizationRequest, error) {
+func (m *DeviceAuthorizationManager) DeviceAuthorization(_ context.Context, deviceCode string) (*goidc.DeviceAuthorization, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -35,7 +49,7 @@ func (m *DeviceAuthorizationManager) DeviceAuthorization(_ context.Context, devi
 }
 
 // DeviceAuthorizationByUserCode implements goidc.DeviceAuthorizationManager.
-func (m *DeviceAuthorizationManager) DeviceAuthorizationByUserCode(_ context.Context, userCode string) (*goidc.DeviceAuthorizationRequest, error) {
+func (m *DeviceAuthorizationManager) DeviceAuthorizationByUserCode(_ context.Context, userCode string) (*goidc.DeviceAuthorization, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 

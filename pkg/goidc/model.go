@@ -41,6 +41,7 @@ const (
 	GrantImplicit          GrantType = "implicit"
 	GrantJWTBearer         GrantType = "urn:ietf:params:oauth:grant-type:jwt-bearer" //nolint:gosec
 	GrantCIBA              GrantType = "urn:openid:params:grant-type:ciba"
+	GrantDeviceCode        GrantType = "urn:ietf:params:oauth:grant-type:device_code"
 )
 
 type ResponseType string
@@ -507,7 +508,6 @@ type TokenInfo struct {
 }
 
 func (ti TokenInfo) MarshalJSON() ([]byte, error) {
-
 	type tokenInfo TokenInfo
 	attributesBytes, err := json.Marshal(tokenInfo(ti))
 	if err != nil {

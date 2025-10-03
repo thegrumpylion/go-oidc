@@ -99,7 +99,6 @@ func (ctx Context) clientAuthnSigAlgs(methods []goidc.ClientAuthnType) []goidc.S
 }
 
 func (ctx Context) ClientCert() (*x509.Certificate, error) {
-
 	if ctx.ClientCertFunc == nil {
 		return nil, errors.New("the client certificate function was not defined")
 	}
@@ -354,6 +353,22 @@ func (ctx Context) DeleteAuthnSession(id string) error {
 	return ctx.AuthnSessionManager.Delete(ctx.Context(), id)
 }
 
+func (ctx Context) SaveDeviceAuthorization(da *goidc.DeviceAuthorization) error {
+	return ctx.DeviceAuthorizationManager.Save(ctx.Context(), da)
+}
+
+func (ctx Context) DeviceAuthorization(deviceCode string) (*goidc.DeviceAuthorization, error) {
+	return ctx.DeviceAuthorizationManager.DeviceAuthorization(ctx.Context(), deviceCode)
+}
+
+func (ctx Context) DeviceAuthorizationByUserCode(userCode string) (*goidc.DeviceAuthorization, error) {
+	return ctx.DeviceAuthorizationManager.DeviceAuthorizationByUserCode(ctx.Context(), userCode)
+}
+
+func (ctx Context) DeleteDeviceAuthorization(deviceCode string) error {
+	return ctx.DeviceAuthorizationManager.Delete(ctx.Context(), deviceCode)
+}
+
 //---------------------------------------- HTTP Utils ----------------------------------------//
 
 func (ctx Context) BaseURL() string {
@@ -460,7 +475,6 @@ func (ctx Context) WriteJWTWithType(token string, status int, contentType string
 }
 
 func (ctx Context) WriteError(err error) {
-
 	ctx.NotifyError(err)
 
 	var oidcErr goidc.Error
@@ -511,7 +525,6 @@ func (ctx Context) ShouldIssueRefreshToken(client *goidc.Client, grantInfo goidc
 }
 
 func (ctx Context) TokenOptions(grantInfo goidc.GrantInfo, client *goidc.Client) goidc.TokenOptions {
-
 	opts := ctx.TokenOptionsFunc(grantInfo, client)
 
 	if shouldSwitchToOpaque(ctx, grantInfo, client, opts) {
@@ -532,7 +545,6 @@ func shouldSwitchToOpaque(
 	client *goidc.Client,
 	opts goidc.TokenOptions,
 ) bool {
-
 	// There is no need to switch if the token is already opaque.
 	if opts.Format == goidc.TokenFormatOpaque {
 		return false
@@ -564,7 +576,6 @@ func (ctx Context) HandleJWTBearerGrantAssertion(assertion string) (goidc.JWTBea
 }
 
 func (ctx Context) HTTPClient() *http.Client {
-
 	if ctx.HTTPClientFunc == nil {
 		return http.DefaultClient
 	}
@@ -692,7 +703,6 @@ func (ctx Context) JWKByAlg(alg goidc.SignatureAlgorithm) (goidc.JSONWebKey, err
 }
 
 func (ctx Context) Sign(claims any, alg goidc.SignatureAlgorithm, opts *jose.SignerOptions) (string, error) {
-
 	if ctx.SignerFunc == nil {
 		jwk, err := ctx.JWKByAlg(alg)
 		if err != nil {
@@ -759,7 +769,6 @@ func (ctx Context) Decrypt(
 }
 
 func (ctx Context) OpenIDFedSign(claims any, opts *jose.SignerOptions) (string, error) {
-
 	jwks, err := ctx.OpenIDFedJWKS()
 	if err != nil {
 		return "", fmt.Errorf("could not load the signing jwk: %w", err)

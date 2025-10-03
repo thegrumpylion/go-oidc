@@ -10,6 +10,7 @@ import (
 
 	"github.com/luikyv/go-oidc/internal/authorize"
 	"github.com/luikyv/go-oidc/internal/dcr"
+	"github.com/luikyv/go-oidc/internal/device"
 	"github.com/luikyv/go-oidc/internal/discovery"
 	"github.com/luikyv/go-oidc/internal/federation"
 	"github.com/luikyv/go-oidc/internal/oidc"
@@ -48,7 +49,6 @@ type Provider struct {
 //     This algorithm can be overridden with [WithIDTokenSignatureAlgs].
 //   - Access tokens are issued as opaque tokens.
 func New(profile goidc.Profile, issuer string, jwksFunc goidc.JWKSFunc, opts ...Option) (*Provider, error) {
-
 	op := &Provider{
 		config: oidc.Configuration{
 			Profile:  profile,
@@ -326,6 +326,12 @@ func (op *Provider) setDefaults() error {
 		op.config.OpenIDFedTrustMarkSigAlgs = nonZeroOrDefault(op.config.OpenIDFedTrustMarkSigAlgs, op.config.OpenIDFedEntityStatementSigAlgs)
 		op.config.OpenIDFedTrustChainMaxDepth = nonZeroOrDefault(op.config.OpenIDFedTrustChainMaxDepth, defaultOpenIDFedTrustChainMaxDepth)
 		op.config.OpenIDFedClientRegTypes = nonZeroOrDefault(op.config.OpenIDFedClientRegTypes, []goidc.ClientRegistrationType{defaultOpenIDFedRegType})
+	}
+
+	if op.config.DeviceAuthorizationIsEnabled {
+		op.config.EndpointDeviceAuthorization = nonZeroOrDefault(op.config.EndpointDeviceAuthorization, defaultEndpointDeviceAuthorization)
+		op.config.DeviceAuthorizationUserCodeCharset = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeCharset, device.DefaultUserCodeCharset)
+		op.config.DeviceAuthorizationUserCodeLength = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeLength, device.DefaultUserCodeLength)
 	}
 
 	return nil

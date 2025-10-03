@@ -48,6 +48,7 @@ type request struct {
 	authDetails       []goidc.AuthorizationDetail
 	assertion         string
 	authReqID         string
+	deviceCode        string
 }
 
 func newRequest(r *http.Request) request {
@@ -61,6 +62,7 @@ func newRequest(r *http.Request) request {
 		resources:         r.PostForm["resource"],
 		assertion:         r.PostFormValue("assertion"),
 		authReqID:         r.PostFormValue("auth_req_id"),
+		deviceCode:        r.PostFormValue("device_code"),
 	}
 
 	if authDetails := r.PostFormValue("authorization_details"); authDetails != "" {
