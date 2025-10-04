@@ -361,22 +361,6 @@ func (ctx Context) DeleteAuthnSession(id string) error {
 	return ctx.AuthnSessionManager.Delete(ctx.Context(), id)
 }
 
-func (ctx Context) SaveDeviceAuthorization(da *goidc.DeviceAuthorization) error {
-	return ctx.DeviceAuthorizationManager.Save(ctx.Context(), da)
-}
-
-func (ctx Context) DeviceAuthorization(deviceCode string) (*goidc.DeviceAuthorization, error) {
-	return ctx.DeviceAuthorizationManager.DeviceAuthorization(ctx.Context(), deviceCode)
-}
-
-func (ctx Context) DeviceAuthorizationByUserCode(userCode string) (*goidc.DeviceAuthorization, error) {
-	return ctx.DeviceAuthorizationManager.DeviceAuthorizationByUserCode(ctx.Context(), userCode)
-}
-
-func (ctx Context) DeleteDeviceAuthorization(deviceCode string) error {
-	return ctx.DeviceAuthorizationManager.Delete(ctx.Context(), deviceCode)
-}
-
 //---------------------------------------- HTTP Utils ----------------------------------------//
 
 func (ctx Context) BaseURL() string {

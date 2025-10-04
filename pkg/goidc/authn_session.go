@@ -49,7 +49,6 @@ type AuthnSession struct {
 	// interaction during calls to the callback endpoint.
 	CallbackID string `json:"callback_id,omitempty"`
 	CIBAAuthID string `json:"ciba_auth_req_id,omitempty"`
-	DeviceCode string `json:"device_code,omitempty"`
 	AuthCode   string `json:"auth_code,omitempty"`
 	// PolicyID is the id of the autentication policy used to authenticate
 	// the user.
@@ -70,6 +69,11 @@ type AuthnSession struct {
 	// ClientCertThumbprint contains the thumbprint of the certificate used by
 	// the client to generate the token.
 	ClientCertThumbprint string `json:"client_cert_thumbprint,omitempty"`
+
+	// device authorization fields
+	DeviceCode           string `json:"device_code,omitempty"`
+	UserCode             string `json:"user_code,omitempty"`
+	AuthorizationPending bool   `json:"authorization_pending,omitempty"`
 
 	// Storage allows storing additional information between interactions.
 	Storage                  map[string]any `json:"store,omitempty"`

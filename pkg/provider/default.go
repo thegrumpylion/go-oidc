@@ -31,7 +31,7 @@ const (
 	defaultEndpointTokenRevocation            = "/revoke"
 	defaultEndpointCIBA                       = "/bc-authorize"
 	defaultEndpointOpenIDFederation           = "/.well-known/openid-federation"
-	defaultEndpointDeviceAuthorization        = "/device_authorization"
+	defaultEndpointDeviceAuthorization        = "/device-authorize"
 )
 
 func defaultTokenOptionsFunc() goidc.TokenOptionsFunc {

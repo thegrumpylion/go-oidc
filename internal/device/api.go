@@ -50,6 +50,7 @@ func handleCreate(ctx oidc.Context) {
 		UserCode:           userCode,
 		ClientID:           client.ID,
 		Scopes:             req.scopes,
+		AuthPending:        true,
 		CreatedAtTimestamp: timeutil.TimestampNow(),
 		ExpiresAtTimestamp: timeutil.TimestampNow() + ctx.DeviceAuthorizationLifetimeSeconds,
 	}
@@ -59,6 +60,7 @@ func handleCreate(ctx oidc.Context) {
 		return
 	}
 
+	// TODO: full url, not just path
 	verCompURI := ""
 	if ctx.DeviceAuthorizationEnableVerificationCompleteURI {
 		verCompURI = ctx.DeviceAuthorizationVerificationURI + "?user_code=" + userCode

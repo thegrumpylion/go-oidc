@@ -22,6 +22,21 @@ func RegisterHandlers(router *http.ServeMux, config *oidc.Configuration, middlew
 		)
 	}
 
+	if config.DeviceAuthorizationIsEnabled {
+		router.Handle(
+			"POST "+config.EndpointPrefix+config.EndpointDeviceAuthorization,
+			goidc.ApplyMiddlewares(oidc.Handler(config, handleDevice), middlewares...),
+		)
+		router.Handle(
+			"GET "+config.EndpointPrefix+config.DeviceAuthorizationEndpoint,
+			goidc.ApplyMiddlewares(oidc.Handler(config, handleDeviceVerify), middlewares...),
+		)
+		router.Handle(
+			"GET "+config.EndpointPrefix+config.DeviceAuthorizationEndpoint+"/login",
+			goidc.ApplyMiddlewares(oidc.Handler(config, handleDeviceAuth), middlewares...),
+		)
+	}
+
 	router.Handle(
 		"GET "+config.EndpointPrefix+config.EndpointAuthorize,
 		goidc.ApplyMiddlewares(oidc.Handler(config, handler), middlewares...),
@@ -50,7 +65,6 @@ func RegisterHandlers(router *http.ServeMux, config *oidc.Configuration, middlew
 }
 
 func handlerPush(ctx oidc.Context) {
-
 	req := newFormRequest(ctx.Request)
 	resp, err := pushAuth(ctx, req)
 	if err != nil {
@@ -92,11 +106,9 @@ func handlerCallback(ctx oidc.Context) {
 	if err != nil {
 		ctx.WriteError(err)
 	}
-
 }
 
 func handlerCIBA(ctx oidc.Context) {
-
 	req := newFormRequest(ctx.Request)
 	resp, err := initBackAuth(ctx, req)
 	if err != nil {
@@ -107,4 +119,23 @@ func handlerCIBA(ctx oidc.Context) {
 	if err := ctx.Write(resp, http.StatusOK); err != nil {
 		ctx.WriteError(err)
 	}
+}
+
+func handleDevice(ctx oidc.Context) {
+	req := newFormRequest(ctx.Request)
+	resp, err := initDeviceAuth(ctx, req)
+	if err != nil {
+		ctx.WriteError(err)
+		return
+	}
+
+	if err := ctx.Write(resp, http.StatusOK); err != nil {
+		ctx.WriteError(err)
+	}
+}
+
+func handleDeviceVerify(ctx oidc.Context) {
+}
+
+func handleDeviceAuth(ctx oidc.Context) {
 }

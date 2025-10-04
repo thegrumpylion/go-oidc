@@ -27,7 +27,7 @@ func generateDeviceCodeGrant(ctx oidc.Context, req request) (response, error) {
 		return response{}, goidc.WrapError(goidc.ErrorCodeInvalidGrant, "invalid device_code", err)
 	}
 
-	if !da.Authorized {
+	if da.AuthPending {
 		return response{}, goidc.NewError(goidc.ErrorCodeAuthPending, "authorization is still pending")
 	}
 	return response{}, nil

@@ -10,11 +10,11 @@ import (
 
 	"github.com/luikyv/go-oidc/internal/authorize"
 	"github.com/luikyv/go-oidc/internal/dcr"
-	"github.com/luikyv/go-oidc/internal/device"
 	"github.com/luikyv/go-oidc/internal/discovery"
 	"github.com/luikyv/go-oidc/internal/federation"
 	"github.com/luikyv/go-oidc/internal/oidc"
 	"github.com/luikyv/go-oidc/internal/storage"
+	"github.com/luikyv/go-oidc/internal/strutil"
 	"github.com/luikyv/go-oidc/internal/token"
 	"github.com/luikyv/go-oidc/internal/userinfo"
 	"github.com/luikyv/go-oidc/pkg/goidc"
@@ -330,8 +330,8 @@ func (op *Provider) setDefaults() error {
 
 	if op.config.DeviceAuthorizationIsEnabled {
 		op.config.EndpointDeviceAuthorization = nonZeroOrDefault(op.config.EndpointDeviceAuthorization, defaultEndpointDeviceAuthorization)
-		op.config.DeviceAuthorizationUserCodeCharset = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeCharset, device.DefaultUserCodeCharset)
-		op.config.DeviceAuthorizationUserCodeLength = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeLength, device.DefaultUserCodeLength)
+		op.config.DeviceAuthorizationUserCodeCharset = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeCharset, strutil.DefaultUserCodeCharset)
+		op.config.DeviceAuthorizationUserCodeLength = nonZeroOrDefault(op.config.DeviceAuthorizationUserCodeLength, strutil.DefaultUserCodeLength)
 	}
 
 	return nil

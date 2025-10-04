@@ -12,6 +12,16 @@ import (
 	"github.com/luikyv/go-oidc/pkg/goidc"
 )
 
+// TODO: move to a more appropriate package? internal/device?
+const (
+	// DefaultUserCodeCharset defines the set of characters to be used for generating the user_code.
+	// This set consists of 20 uppercase consonants, chosen to avoid visual ambiguity.
+	// https://datatracker.ietf.org/doc/html/rfc8628#section-6.1
+	DefaultUserCodeCharset = "BCDFGHJKLMNPQRSTVWXZ"
+	// DefaultUserCodeLength defines the fixed length of the generated user_code.
+	DefaultUserCodeLength = 8
+)
+
 const charset string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func ContainsOpenID(scopes string) bool {
@@ -32,6 +42,21 @@ func SplitWithSpaces(s string) []string {
 }
 
 func Random(length int) string {
+	result := strings.Builder{}
+	charsetLength := big.NewInt(int64(len(charset)))
+
+	for i := 0; i < length; i++ {
+		n, err := rand.Int(rand.Reader, charsetLength)
+		if err != nil {
+			panic(err)
+		}
+		result.WriteByte(charset[n.Int64()])
+	}
+
+	return result.String()
+}
+
+func RandomFromCharset(length int, charset string) string {
 	result := strings.Builder{}
 	charsetLength := big.NewInt(int64(len(charset)))
 

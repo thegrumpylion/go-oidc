@@ -5,10 +5,9 @@ import (
 )
 
 type Configuration struct {
-	ClientManager              goidc.ClientManager
-	AuthnSessionManager        goidc.AuthnSessionManager
-	GrantSessionManager        goidc.GrantSessionManager
-	DeviceAuthorizationManager goidc.DeviceAuthorizationManager
+	ClientManager       goidc.ClientManager
+	AuthnSessionManager goidc.AuthnSessionManager
+	GrantSessionManager goidc.GrantSessionManager
 
 	Profile goidc.Profile
 	// Host is the domain where the server runs. This value will be used as the
@@ -207,11 +206,11 @@ type Configuration struct {
 	OpenIDFedTrustMarkSigAlgs       []goidc.SignatureAlgorithm
 
 	DeviceAuthorizationIsEnabled                     bool
-	DeviceAuthorizationVerificationURI               string
 	DeviceAuthorizationEnableVerificationCompleteURI bool
 	DeviceAuthorizationLifetimeSeconds               int
 	DeviceAuthorizationUserCodeLength                int
 	DeviceAuthorizationUserCodeCharset               string
 	DeviceAuthorizationPollIntervalSeconds           int
+	DeviceAuthorizationEndpoint                      string
 	HandleDeviceAuthorizationFunc                    goidc.HandleDeviceAuthorizationFunc
 }
