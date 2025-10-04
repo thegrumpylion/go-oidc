@@ -741,3 +741,5 @@ const (
 type RequiredTrustMarksFunc func(context.Context) []string
 
 type HandleSessionFunc func(*http.Request, *AuthnSession, *Client) error
+
+type HandleDeviceAuthorizationFunc func(*http.Request) (string, error)

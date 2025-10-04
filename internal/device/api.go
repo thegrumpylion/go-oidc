@@ -15,6 +15,10 @@ func RegisterHandlers(router *http.ServeMux, config *oidc.Configuration, middlew
 			"POST "+config.EndpointPrefix+config.EndpointDeviceAuthorization,
 			goidc.ApplyMiddlewares(oidc.Handler(config, handleCreate), middlewares...),
 		)
+		router.Handle(
+			"GET "+config.EndpointPrefix+config.DeviceAuthorizationVerificationURI,
+			goidc.ApplyMiddlewares(oidc.Handler(config, handleVerify), middlewares...),
+		)
 	}
 }
 
@@ -56,8 +60,8 @@ func handleCreate(ctx oidc.Context) {
 	}
 
 	verCompURI := ""
-	if ctx.DeviceAuthorizationVerificationCompleteURI != "" {
-		verCompURI = ctx.DeviceAuthorizationVerificationCompleteURI + "?user_code=" + userCode
+	if ctx.DeviceAuthorizationEnableVerificationCompleteURI {
+		verCompURI = ctx.DeviceAuthorizationVerificationURI + "?user_code=" + userCode
 	}
 	resp := response{
 		DeviceCode:              deviceCode,
@@ -70,5 +74,35 @@ func handleCreate(ctx oidc.Context) {
 
 	if err := ctx.Write(resp, http.StatusOK); err != nil {
 		ctx.WriteError(err)
+	}
+}
+
+func handleVerify(ctx oidc.Context) {
+	// check if we have a user_code in the query parameters
+	userCode := ctx.Request.URL.Query().Get("user_code")
+	var err error
+
+	if userCode == "" {
+		userCode, err = ctx.HandleDeviceAuthorizationFunc(ctx.Request)
+		if err != nil {
+			err = goidc.WrapError(goidc.ErrorCodeInvalidRequest, "could not handle device authorization", err)
+			ctx.WriteError(err)
+			return
+		}
+	}
+
+	// TODO: should we error on empty userCode here? the db lookup will fail anyway
+	da, err := ctx.DeviceAuthorizationByUserCode(userCode)
+	if err != nil {
+		err = goidc.WrapError(goidc.ErrorCodeInvalidRequest, "could not fetch device authorization", err)
+		ctx.WriteError(err)
+		return
+	}
+
+	// validate
+	if da.ExpiresAtTimestamp < timeutil.TimestampNow() {
+		err := goidc.NewError(goidc.ErrorCodeExpiredToken, "expired user code")
+		ctx.WriteError(err)
+		return
 	}
 }

@@ -206,11 +206,12 @@ type Configuration struct {
 	OpenIDFedRequiredTrustMarksFunc goidc.RequiredTrustMarksFunc
 	OpenIDFedTrustMarkSigAlgs       []goidc.SignatureAlgorithm
 
-	DeviceAuthorizationIsEnabled               bool
-	DeviceAuthorizationVerificationURI         string
-	DeviceAuthorizationVerificationCompleteURI string
-	DeviceAuthorizationLifetimeSeconds         int
-	DeviceAuthorizationUserCodeLength          int
-	DeviceAuthorizationUserCodeCharset         string
-	DeviceAuthorizationPollIntervalSeconds     int
+	DeviceAuthorizationIsEnabled                     bool
+	DeviceAuthorizationVerificationURI               string
+	DeviceAuthorizationEnableVerificationCompleteURI bool
+	DeviceAuthorizationLifetimeSeconds               int
+	DeviceAuthorizationUserCodeLength                int
+	DeviceAuthorizationUserCodeCharset               string
+	DeviceAuthorizationPollIntervalSeconds           int
+	HandleDeviceAuthorizationFunc                    goidc.HandleDeviceAuthorizationFunc
 }

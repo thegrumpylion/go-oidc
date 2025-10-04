@@ -79,6 +79,17 @@ func (m *AuthnSessionManager) SessionByCIBAAuthID(_ context.Context, id string) 
 	return session, nil
 }
 
+func (m *AuthnSessionManager) SessionByDeviceCode(_ context.Context, deviceCode string) (*goidc.AuthnSession, error) {
+	session, exists := m.firstSession(func(s *goidc.AuthnSession) bool {
+		return s.DeviceCode == deviceCode
+	})
+	if !exists {
+		return nil, errors.New("entity not found")
+	}
+
+	return session, nil
+}
+
 func (m *AuthnSessionManager) Delete(_ context.Context, id string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

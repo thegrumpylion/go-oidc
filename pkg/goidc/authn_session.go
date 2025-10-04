@@ -23,6 +23,9 @@ type AuthnSessionManager interface {
 	// during CIBA.
 	// If CIBA is not enabled, this function can be left empty.
 	SessionByCIBAAuthID(ctx context.Context, id string) (*AuthnSession, error)
+	// SessionByDeviceCode fetches an authn session by the device code created
+	// during the device authorization flow.
+	SessionByDeviceCode(ctx context.Context, deviceCode string) (*AuthnSession, error)
 	Delete(ctx context.Context, id string) error
 }
 
@@ -46,6 +49,7 @@ type AuthnSession struct {
 	// interaction during calls to the callback endpoint.
 	CallbackID string `json:"callback_id,omitempty"`
 	CIBAAuthID string `json:"ciba_auth_req_id,omitempty"`
+	DeviceCode string `json:"device_code,omitempty"`
 	AuthCode   string `json:"auth_code,omitempty"`
 	// PolicyID is the id of the autentication policy used to authenticate
 	// the user.

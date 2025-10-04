@@ -325,6 +325,10 @@ func (ctx Context) SaveAuthnSession(session *goidc.AuthnSession) error {
 	if session.CIBAAuthID != "" {
 		numberOfIndexes++
 	}
+	// TODO: is this needed for device flow?
+	if session.DeviceCode != "" {
+		numberOfIndexes++
+	}
 
 	if numberOfIndexes != 1 {
 		return errors.New("invalid authn session indexing")
@@ -347,6 +351,10 @@ func (ctx Context) AuthnSessionByRequestURI(uri string) (*goidc.AuthnSession, er
 
 func (ctx Context) AuthnSessionByAuthReqID(id string) (*goidc.AuthnSession, error) {
 	return ctx.AuthnSessionManager.SessionByCIBAAuthID(ctx.Context(), id)
+}
+
+func (ctx Context) AuthnSessionByDeviceCode(code string) (*goidc.AuthnSession, error) {
+	return ctx.AuthnSessionManager.SessionByDeviceCode(ctx.Context(), code)
 }
 
 func (ctx Context) DeleteAuthnSession(id string) error {
